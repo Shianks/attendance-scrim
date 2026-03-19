@@ -1,159 +1,374 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4SYN | Recruitment</title>
+    <style>
+        :root {
+            --primary-gold: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.4);
+            --accent-red: #8b0000;
+            --dark-bg: #0a0a0a;
+            --glass: rgba(15, 15, 15, 0.95);
+        }
 
-<title>4Synaris Scrim Attendance</title>
+        body {
+            background-color: var(--dark-bg);
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(139, 0, 0, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.1) 0%, transparent 40%);
+            color: #e0e0e0;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
 
-<style>
+        /* --- INTRO OVERLAY --- */
+        #intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
 
-body{
-background:#0b0f1a;
-color:white;
-font-family:Arial;
-text-align:center;
-}
+        .intro-content {
+            max-width: 600px;
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0,0,0,1), 0 0 15px var(--gold-glow);
+        }
 
-h1{
-color:#00ffd5;
-}
+        .intro-logo { max-width: 100px; margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--primary-gold)); }
+        .intro-title { color: var(--primary-gold); letter-spacing: 5px; text-transform: uppercase; font-size: 1.4rem; margin-bottom: 20px; }
+        .intro-text { line-height: 1.8; font-size: 0.95rem; color: #ccc; margin-bottom: 30px; }
 
-.container{
-width:85%;
-margin:auto;
-}
+        .leadership-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 35px; }
+        .leader-card { border: 1px solid rgba(212, 175, 55, 0.2); padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.3); }
+        .leader-role { font-size: 0.65rem; color: var(--primary-gold); text-transform: uppercase; display: block; margin-bottom: 4px; }
+        .leader-name { font-size: 0.9rem; font-weight: bold; color: #fff; }
 
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:20px;
-background:#141a2e;
-}
+        .btn-proceed {
+            background: var(--primary-gold);
+            color: #000;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
 
-th,td{
-border:1px solid #2e3552;
-padding:10px;
-}
+        .btn-proceed:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--primary-gold); }
 
-th{
-background:#1e2542;
-}
+        /* --- MAIN FORM CONTAINER --- */
+        .container {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            max-width: 550px;
+            width: 100%;
+            padding: 50px;
+            margin: 40px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 15px var(--gold-glow);
+            position: relative;
+        }
 
-input,select{
-padding:6px;
-background:#0e1324;
-color:white;
-border:1px solid #333;
-}
+        .logo-container { text-align: center; margin-bottom: 20px; }
+        .logo-container img { max-width: 120px; filter: drop-shadow(0 0 10px var(--primary-gold)); }
 
-button{
-margin:5px;
-padding:8px 15px;
-background:#00ffd5;
-border:none;
-cursor:pointer;
-font-weight:bold;
-}
+        h1 { text-align: center; color: var(--primary-gold); text-transform: uppercase; letter-spacing: 4px; font-size: 1.6rem; margin-bottom: 40px; font-weight: 800; }
+        .form-group { margin-bottom: 25px; }
+        label { display: block; margin-bottom: 10px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--primary-gold); }
 
-.deleteBtn{
-background:#ff4d4d;
-color:white;
-}
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 14px;
+            background: rgba(30, 30, 30, 0.7);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
+            color: white;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
 
-</style>
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            background: rgba(45, 45, 45, 0.9);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
 
+        /* --- TOOLTIP CARDS --- */
+        .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .option-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .option-card:hover { border-color: var(--primary-gold); background: rgba(212, 175, 55, 0.05); }
+
+        .option-card .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(12px);
+            color: #fff;
+            text-align: left;
+            border-radius: 12px;
+            padding: 15px;
+            position: absolute;
+            z-index: 100;
+            bottom: 115%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            border: 1px solid var(--primary-gold);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            pointer-events: none;
+        }
+
+        .option-card:hover .tooltiptext { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .perks-list { margin: 8px 0 0 0; padding-left: 15px; list-style-type: '⚡ '; font-size: 0.75rem; text-transform: none; line-height: 1.5; }
+
+        input[type="radio"] { accent-color: var(--primary-gold); margin-right: 10px; }
+
+        button#submitBtn {
+            width: 100%;
+            padding: 18px;
+            margin-top: 20px;
+            background: transparent;
+            color: white;
+            border: 2px solid var(--primary-gold);
+            border-radius: 8px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.4s;
+        }
+
+        button#submitBtn:hover { background: var(--primary-gold); color: black; box-shadow: 0 0 20px var(--primary-gold); }
+        .footer-text { text-align: center; color: rgba(255,255,255,0.4); font-size: 0.75rem; margin-top: 30px; letter-spacing: 1px; }
+        .required-star { color: #ff4d4d; margin-left: 3px; }
+    </style>
 </head>
-
 <body>
 
-<h1>4Synaris Scrimmage Attendance</h1>
+<div id="intro-overlay">
+    <div class="intro-content">
+        <img src="clan.jpg" class="intro-logo" alt="4SYN">
+        <h2 class="intro-title">Absolute Synergy</h2>
+        <p class="intro-text">
+            4SYN | 4SYNARIS is a premier, community-driven collective in Bloodstrike. Built on the pillars of <strong>Generosity, Growth, and Excellence</strong>, we provide an elite environment where skill meets brotherhood. We demand dedication, synchronized teamwork, and a drive for the top.
+        </p>
+
+        <div class="leadership-grid">
+            <div class="leader-card"><span class="leader-role">Founder</span><span class="leader-name">Hisae</span></div>
+            <div class="leader-card"><span class="leader-role">Strategist</span><span class="leader-name">Shianks</span></div>
+            <div class="leader-card"><span class="leader-role">Overseer</span><span class="leader-name">Sushi</span></div>
+        </div>
+
+        <button class="btn-proceed" onclick="enterRecruitment()">Ascend to 4SYN</button>
+    </div>
+</div>
 
 <div class="container">
+    <div class="logo-container">
+        <img src="clan.jpg" alt="4SYN Logo">
+    </div>
+    
+    <h1>4SYN Recruitment</h1>
 
-<p>Date: <input type="date" id="scrimDate"></p>
+    <form id="recruitmentForm">
+        <div class="form-group">
+            <label>In-Game Name & UID <span class="required-star">*</span></label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="ign" placeholder="IGN" style="width: 50%;" required>
+                <input type="text" id="uid" placeholder="Game UID" style="width: 50%;" required>
+            </div>
+        </div>
 
-<table id="playerTable">
+        <div class="form-group">
+            <label>Playstyle <span class="required-star">*</span></label>
+            <div class="option-grid">
+                <label class="option-card">
+                    <input type="radio" name="playstyle" value="Competitive" required> Competitive
+                    <div class="tooltiptext">
+                        <strong style="color:var(--primary-gold)">COMPETITIVE PERKS:</strong>
+                        <ul class="perks-list">
+                            <li>Daily scrimmages</li>
+                            <li>Monthly cash/gold rewards</li>
+                            <li>Active teammates & rank push</li>
+                            <li>Clan tournaments & events</li>
+                            <li>Friendly & non-toxic community</li>
+                        </ul>
+                    </div>
+                </label>
+                <label class="option-card">
+                    <input type="radio" name="playstyle" value="Casual"> Casual
+                    <div class="tooltiptext">
+                        <strong style="color:var(--primary-gold)">CASUAL PERKS:</strong>
+                        <ul class="perks-list">
+                            <li>Improve skills with teammates</li>
+                            <li>Respectful community</li>
+                            <li>Supportive environment</li>
+                            <li>Monthly clan events with prizes</li>
+                            <li>Make new friends & build teams</li>
+                        </ul>
+                    </div>
+                </label>
+            </div>
+        </div>
 
-<tr>
-<th>Player</th>
-<th>Status</th>
-<th>Remarks</th>
-<th>Action</th>
-</tr>
+        <div class="form-group">
+            <label>Platform <span class="required-star">*</span></label>
+            <div class="option-grid">
+                <label class="option-card"><input type="radio" name="platform" value="PC" required> PC</label>
+                <label class="option-card"><input type="radio" name="platform" value="Mobile"> Mobile</label>
+            </div>
+        </div>
 
-</table>
+        <div class="form-group">
+            <label>Discord Username <span class="required-star">*</span></label>
+            <input type="text" id="discordUser" placeholder="e.g. username" required>
+        </div>
 
-<button onclick="addPlayer()">Add Player</button>
-<button onclick="submitAttendance()">Submit Attendance</button>
+        <div class="form-group">
+            <label>Age & Nationality <span class="required-star">*</span></label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="age" placeholder="Age" style="width: 30%;" required>
+                <input type="text" id="nationality" placeholder="Nationality" style="width: 70%;" required>
+            </div>
+        </div>
 
+        <div class="form-group">
+            <label>Working Microphone? <span class="required-star">*</span></label>
+            <select id="hasMic" required>
+                <option value="" disabled selected>Choose an option...</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                <option value="Listen Only">I can listen only</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Why do you want to join 4SYN? <span class="required-star">*</span></label>
+            <textarea id="whyJoin" rows="3" placeholder="Tell us about yourself..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Previous Clan? (Leave blank if none)</label>
+            <input type="text" id="prevClan" placeholder="Name of clan and reason for leaving">
+        </div>
+
+        <div class="form-group">
+            <label>Ready for 4SYN tag? <span class="required-star">*</span></label>
+            <select id="tagReady" required>
+                <option value="" disabled selected>Choose an option...</option>
+                <option value="Immediately">Yes, immediately</option>
+                <option value="Needs time">I need a few days</option>
+            </select>
+        </div>
+
+        <button type="submit" id="submitBtn">Submit Application</button>
+    </form>
+    
+    <p class="footer-text">QUALIFIED APPLICANTS WILL BE CONTACTED VIA DISCORD</p>
 </div>
 
 <script>
+    function enterRecruitment() {
+        const overlay = document.getElementById('intro-overlay');
+        overlay.style.opacity = '0';
+        setTimeout(() => { overlay.style.visibility = 'hidden'; }, 800);
+    }
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbzaVqa-YF4Ag7LkOWDymNDbxgANDdWot4yqTE1JIAtqwZ07mS1Jf4njQmu9vRSbiQaJ/exec";
+    const webhookURL = "https://discord.com/api/webhooks/1454879705768525865/zsvUUI2W1wteTuVcQBf077wzxMhrLgByTAA525-l-O-9pRHKzT0RMI1J2RMmrLRuQ7Os";
 
-function addPlayer(){
+    document.getElementById('recruitmentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.innerText = "TRANSMITTING...";
+        btn.disabled = true;
 
-let table=document.getElementById("playerTable");
+        const data = {
+            ign: document.getElementById('ign').value,
+            uid: document.getElementById('uid').value,
+            platform: document.querySelector('input[name="platform"]:checked').value,
+            playstyle: document.querySelector('input[name="playstyle"]:checked').value,
+            discord: document.getElementById('discordUser').value,
+            age: document.getElementById('age').value,
+            nat: document.getElementById('nationality').value,
+            mic: document.getElementById('hasMic').value,
+            why: document.getElementById('whyJoin').value,
+            prev: document.getElementById('prevClan').value || "None",
+            tag: document.getElementById('tagReady').value
+        };
 
-let row=table.insertRow();
+        const params = {
+            username: "4SYN Recruitment Bot",
+            embeds: [{
+                title: "📜 NEW RECRUITMENT APPLICATION",
+                color: 13936183, 
+                fields: [
+                    { name: "👤 IGN", value: data.ign, inline: true },
+                    { name: "🆔 UID", value: data.uid, inline: true },
+                    { name: "⚔️ Style", value: data.playstyle, inline: true },
+                    { name: "🎮 Platform", value: data.platform, inline: true },
+                    { name: "💬 Discord", value: data.discord, inline: true },
+                    { name: "🌍 Nationality", value: data.nat, inline: true },
+                    { name: "🎙️ Mic", value: data.mic, inline: true },
+                    { name: "🏷️ Tag", value: data.tag, inline: true },
+                    { name: "🏰 Previous", value: data.prev },
+                    { name: "📝 Why?", value: data.why }
+                ],
+                footer: { text: "4SYN Clan Management System" },
+                timestamp: new Date()
+            }]
+        };
 
-row.innerHTML=`
-
-<td><input placeholder="Player name"></td>
-
-<td>
-<select>
-<option>Present</option>
-<option>Absent</option>
-</select>
-</td>
-
-<td>
-<input placeholder="Remarks">
-</td>
-
-<td>
-<button class="deleteBtn" onclick="deleteRow(this)">Delete</button>
-</td>
-
-`;
-
-}
-
-function deleteRow(btn){
-btn.parentElement.parentElement.remove();
-}
-
-function submitAttendance(){
-
-let date=document.getElementById("scrimDate").value;
-
-let rows=document.querySelectorAll("#playerTable tr");
-
-rows.forEach((row,i)=>{
-
-if(i===0)return;
-
-let player=row.cells[0].querySelector("input").value;
-let status=row.cells[1].querySelector("select").value;
-let remarks=row.cells[2].querySelector("input").value;
-
-fetch(scriptURL,{
-method:"POST",
-body:JSON.stringify({
-date:date,
-player:player,
-status:status,
-remarks:remarks
-})
-});
-
-});
-
-alert("Attendance submitted!");
-
-}
-
+        fetch(webhookURL, {
+            method: "POST",
+            headers: { 'Content-type': 'application/json' },
+            body: JSON.stringify(params)
+        }).then(() => {
+            alert("Application Sent Successfully!");
+            location.reload();
+        }).catch(() => {
+            alert("Error sending application.");
+            btn.disabled = false;
+            btn.innerText = "Submit Application";
+        });
+    });
 </script>
 
 </body>
